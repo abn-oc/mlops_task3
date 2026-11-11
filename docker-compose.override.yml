@@ -1,0 +1,42 @@
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: currency_mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: currency123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - default
+      - airflow_shared
+
+  mongo-express:
+    image: mongo-express:1
+    container_name: currency_mongo_express
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: currency123
+      ME_CONFIG_BASICAUTH: "false"
+    ports:
+      - "8081:8081"
+    networks:
+      - default
+
+volumes:
+  mongodb_data:
+    external: true
+    name: mlopstask-3_6811ee_mongodb_data
+
+networks:
+  airflow_shared:
+    external: true
+    name: mlopstask-3_6811ee_airflow
